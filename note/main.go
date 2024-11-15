@@ -15,6 +15,10 @@ type saver interface {
   Save() error
 }
 
+type outputtable interface {
+  saver
+  Display()
+}
 
 func main() {
 
@@ -32,8 +36,7 @@ func main() {
 	}
 
 	note := note.New(title, content)
-	note.Display()
-  err = saveData(note)
+  err = outputData(note)
 
   if err != nil {
     return
@@ -47,18 +50,18 @@ func main() {
   }
 
   todo := todo.New(input)
-  todo.Display()
-  err = saveData(todo)
+  outputData(todo)
+}
 
-  if err != nil {
-    return
+func printSomething(value any) {
+  switch value.(type) {
+    case int: 
+      fmt.Println("Integer: ", value)
+    case float64:
+      fmt.Println("Float: ", value)
+    case string:
+      fmt.Println(value)
   }
-}
-
-func createTodo() {
-}
-
-func createNote() {
 }
 
 func getUserInput(prompt string) (string, error) {
@@ -93,4 +96,9 @@ func saveData(data saver) error {
 
   fmt.Println("Your data was saved successfully.")
   return nil
+}
+
+func outputData(data outputtable) error {
+  data.Display()
+  return saveData(data)
 }
